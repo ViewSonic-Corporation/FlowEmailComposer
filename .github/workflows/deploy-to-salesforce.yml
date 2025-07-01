@@ -69,7 +69,7 @@ jobs:
         run: |
           DEPLOY_DIR="."  # 根目錄就是 metadata 結構所在
 
-          DEPLOY_CMD="sfdx force:mdapi:deploy -u $ORG_ALIAS -x $DEPLOY_DIR/package.xml -d $DEPLOY_DIR -w 10"
+          DEPLOY_CMD="sfdx force:mdapi:deploy -u $ORG_ALIAS -d $DEPLOY_DIR -w 10"
 
           if [[ "${{ github.event.inputs.validate_only }}" == "true" ]]; then
             DEPLOY_CMD="$DEPLOY_CMD --checkonly"
