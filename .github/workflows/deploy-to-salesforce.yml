@@ -65,15 +65,12 @@ jobs:
           sfdx auth:sfdxurl:store -f auth.txt -a $ORG_ALIAS
           sfdx force:org:display -u $ORG_ALIAS
 
-      - name: Convert to Metadata API Format
+      - name: Deploy to Salesforce (Metadata API)
         run: |
-          mkdir mdapi_output
-          sfdx force:source:convert -r . -d mdapi_output
+          DEPLOY_DIR="."  # 根目錄就是 metadata 結構所在
 
-      - name: Deploy to Salesforce (MDAPI)
-        run: |
-          DEPLOY_CMD="sfdx force:mdapi:deploy -u $ORG_ALIAS -d mdapi_output -w 10"
-          
+          DEPLOY_CMD="sfdx force:mdapi:deploy -u $ORG_ALIAS -x $DEPLOY_DIR/package.xml -d $DEPLOY_DIR -w 10"
+
           if [[ "${{ github.event.inputs.validate_only }}" == "true" ]]; then
             DEPLOY_CMD="$DEPLOY_CMD --checkonly"
           fi
