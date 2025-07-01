@@ -65,10 +65,15 @@ jobs:
           sfdx auth:sfdxurl:store -f auth.txt -a $ORG_ALIAS
           sfdx force:org:display -u $ORG_ALIAS
 
-      - name: Deploy to Salesforce
+      - name: Convert to Metadata API Format
         run: |
-          DEPLOY_CMD="sfdx force:source:deploy -u $ORG_ALIAS -p force-app"
+          mkdir mdapi_output
+          sfdx force:source:convert -r . -d mdapi_output
 
+      - name: Deploy to Salesforce (MDAPI)
+        run: |
+          DEPLOY_CMD="sfdx force:mdapi:deploy -u $ORG_ALIAS -d mdapi_output -w 10"
+          
           if [[ "${{ github.event.inputs.validate_only }}" == "true" ]]; then
             DEPLOY_CMD="$DEPLOY_CMD --checkonly"
           fi
@@ -81,3 +86,4 @@ jobs:
 
           echo "🚀 Running: $DEPLOY_CMD"
           eval $DEPLOY_CMD
+
